@@ -187,7 +187,7 @@ void GPIO_IRQConfig(uint8_t IRQNumber, uint8_t IRQPriority, uint8_t EnorDI)
  *
  * @brief           - Function for handling gpio interrupts
  *
- * @param[in]       - specific pin number
+ * @param[in]       - specific pin numberr
 
  *
  * @return          - none
