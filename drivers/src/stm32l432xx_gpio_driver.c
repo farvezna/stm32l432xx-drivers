@@ -26,7 +26,27 @@
  */
 void GPIO_PeriClockControl(GPIO_RegDef_t *pGPIOx, uint8_t EnorDi)
 {
-
+    if(EnorDi == ENABLE) {  //enable
+        if(pGPIOx == GPIOA) {
+            GPIOA_PCLK_EN();
+        } else if (pGPIOx == GPIOB) {
+            GPIOB_PCLK_EN();
+        } else  if (pGPIOx == GPIOC) {
+            GPIOC_PCLK_EN();
+        } else if (pGPIOx == GPIOH) {
+            GPIOH_PCLK_EN();
+        }
+    } else {                //disable
+        if(pGPIOx == GPIOA) {
+            GPIOA_PCLK_DI();
+        } else if (pGPIOx == GPIOB) {
+            GPIOB_PCLK_DI();
+        } else  if (pGPIOx == GPIOC) {
+            GPIOC_PCLK_DI();
+        } else if (pGPIOx == GPIOH) {
+            GPIOH_PCLK_DI();
+        }
+    }
 }
 
 /*
@@ -187,7 +207,7 @@ void GPIO_IRQConfig(uint8_t IRQNumber, uint8_t IRQPriority, uint8_t EnorDI)
  *
  * @brief           - Function for handling gpio interrupts
  *
- * @param[in]       - specific pin numberr
+ * @param[in]       - specific pin number
 
  *
  * @return          - none
