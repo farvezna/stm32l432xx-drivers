@@ -149,7 +149,9 @@ void GPIO_DeInit(GPIO_RegDef_t *pGPIOx)
  */
 uint8_t GPIO_ReadFromInputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber)
 {
-
+    uint8_t value;
+    value = (uint8_t)((pGPIOx->IDR >> PinNumber) & 0x00000001); //shift pin desired to lsb then mask (cast to uint_8 to truncate?)
+    return value;
 }
 
 /****************************************************************************
@@ -166,7 +168,9 @@ uint8_t GPIO_ReadFromInputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber)
  */
 uint16_t GPIO_ReadFromInputPort(GPIO_RegDef_t *pGPIOx)
 {
-
+    uint16_t value;
+    value = (uint16_t)pGPIOx->IDR; //return entire port
+    return value;
 }
 
 /****************************************************************************
