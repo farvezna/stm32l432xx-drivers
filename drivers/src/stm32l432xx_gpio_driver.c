@@ -66,7 +66,43 @@ void GPIO_PeriClockControl(GPIO_RegDef_t *pGPIOx, uint8_t EnorDi)
  */
 void GPIO_Init(GPIO_Handle_t *pGPIOHandle)
 {
+    uint32_t temp = 0; //temp register
+    //configure mode
+    if(pGPIOHandle->GPIO_PinConfig.GPIO_PinMode <= GPIO_MODE_ANALOG) {
+        //non-interrrupt mode
+        temp = (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode << (2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber)); //position bits
+        pGPIOHandle->pGPIOx->MODER &= ~(0x3 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); //clearing
+        pGPIOHandle->pGPIOx->MODER |= temp; //set mode in actual register
+    } else {
+        //TODO: interrupt modes
+    }
+    temp = 0; //reset temp
 
+    //configure speed
+    temp = (pGPIOHandle->GPIO_PinConfig.GPIO_PinSpeed << (2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber)); //position bits
+    pGPIOHandle->pGPIOx->OSPEEDR &= ~(0x3 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); //clearing
+    pGPIOHandle->pGPIOx->OSPEEDR |= temp;
+    temp = 0;
+    //configure pupd settings
+    temp = (pGPIOHandle->GPIO_PinConfig.GPIO_PinPuPdControl << (2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber)); //position bits
+    pGPIOHandle->pGPIOx->PUPDR &= ~(0x3 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); //clearing
+    pGPIOHandle->pGPIOx->PUPDR |= temp;
+    temp = 0;
+    //configure output type
+    temp = (pGPIOHandle->GPIO_PinConfig.GPIO_PinOPType << (pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber)); //position bits
+    pGPIOHandle->pGPIOx->OTYPER &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); //clearing
+    pGPIOHandle->pGPIOx->OTYPER |= temp;
+    temp = 0;
+    //configure alt functionality if req
+    if (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_ALTFN) {
+        //configure alt function registers
+        uint8_t temp1, temp2;
+
+        temp1 = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber / 8;
+        temp2 = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber % 8;
+        pGPIOHandle->pGPIOx->AFR[temp1] &= ~(0xF <<  (4 * temp2)); //clearing
+        pGPIOHandle->pGPIOx->AFR[temp1] |= (pGPIOHandle->GPIO_PinConfig.GPIO_PinAltFunMode <<  (4 * temp2)); //setting alt func
+    }
 }
 
 /****************************************************************************
@@ -83,7 +119,15 @@ void GPIO_Init(GPIO_Handle_t *pGPIOHandle)
  */
 void GPIO_DeInit(GPIO_RegDef_t *pGPIOx)
 {
-
+    if(pGPIOx == GPIOA) {
+        GPIOA_REG_RESET();
+    } else if (pGPIOx == GPIOB) {
+        GPIOB_REG_RESET();
+    } else  if (pGPIOx == GPIOC) {
+        GPIOC_REG_RESET();
+    } else if (pGPIOx == GPIOH) {
+        GPIOH_REG_RESET();
+    }
 }
 
 /*

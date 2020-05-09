@@ -204,6 +204,15 @@ typedef struct {
 
 #define SYSCFG_PCLK_DI()        (RCC->APB2ENR &= ~(1 << 0))
 
+/*
+ * Macros to reset GPIOx peripherals
+ */
+
+#define GPIOA_REG_RESET()       do{ (RCC->AHB2RSTR |= (1 << 0)); (RCC->AHB2RSTR &= ~(1 << 0));} while(0) //reset at 1, cannot keep holding so put back to 0
+#define GPIOB_REG_RESET()       do{ (RCC->AHB2RSTR |= (1 << 1)); (RCC->AHB2RSTR &= ~(1 << 1));} while(0)
+#define GPIOC_REG_RESET()       do{ (RCC->AHB2RSTR |= (1 << 2)); (RCC->AHB2RSTR &= ~(1 << 2));} while(0)
+#define GPIOH_REG_RESET()       do{ (RCC->AHB2RSTR |= (1 << 7)); (RCC->AHB2RSTR &= ~(1 << 7));} while(0)
+
 //generic macros
 #define ENABLE              1
 #define DISABLE             0
