@@ -90,29 +90,29 @@ typedef struct {
     __vo uint32_t ICSCR;            //internal clock sources calibration register
     __vo uint32_t CFGR;             //clock configuration register
     __vo uint32_t PLLCFGR;          //PLL configuration register
-    __vo uint32_t PLLSAI1CFGR;      //PLLSAI1 configuration register
+    __vo uint64_t PLLSAI1CFGR;      //PLLSAI1 configuration register
     __vo uint32_t CIER;             //clock interrupt enable register
     __vo uint32_t CIFR;             //clock interrupt flag register
-    __vo uint32_t CICR;             //clock interrupt clear register
+    __vo uint64_t CICR;             //clock interrupt clear register
     __vo uint32_t AHB1RSTR;         //AHB1 peripheral reset register
     __vo uint32_t AHB2RSTR;         //AHB2 peripheral reset register
-    __vo uint32_t AHB3RSTR;         //AHB3 peripheral reset register
+    __vo uint64_t AHB3RSTR;         //AHB3 peripheral reset register
     __vo uint32_t APB1RSTR1;        //APB1 peripheral reset register 1
     __vo uint32_t APB1RSTR2;        //APB1 peripheral reset register 2
-    __vo uint32_t APB2RSTR;         //APB2 peripheral reset register
+    __vo uint64_t APB2RSTR;         //APB2 peripheral reset register
     __vo uint32_t AHB1ENR;          //AHB1 peripheral clock enable register
     __vo uint32_t AHB2ENR;          //AHB2 peripheral clock enable register
-    __vo uint32_t AHB3ENR;          //AHB3 peripheral clock enable register
+    __vo uint64_t AHB3ENR;          //AHB3 peripheral clock enable register
     __vo uint32_t APB1ENR1;         //APB1 peripheral clock enable register 1
     __vo uint32_t APB1ENR2;         //APB1 peripheral clock enable register 2
-    __vo uint32_t APB2ENR;          //APB2 peripheral clock enable register
+    __vo uint64_t APB2ENR;          //APB2 peripheral clock enable register
     __vo uint32_t AHB1SMENR;        //AHB1 peripheral clocks enable in Sleep and Stop modes register
     __vo uint32_t AHB2SMENR;        //AHB2 peripheral clocks enable in Sleep and Stop modes register
-    __vo uint32_t AHB3SMENR;        //AHB3 peripheral clocks enable in Sleep and Stop modes register
+    __vo uint64_t AHB3SMENR;        //AHB3 peripheral clocks enable in Sleep and Stop modes register
     __vo uint32_t APB1SMENR1;       //APB1 peripheral clocks enable in Sleep and Stop modes register 1
-    __vo uint32_t APB2SMENR2;       //APB1 peripheral clocks enable in Sleep and Stop modes register 2
-    __vo uint32_t APB2SMENR;        //APB2 peripheral clocks enable in Sleep and Stop modes register
-    __vo uint32_t CCIPR;            //Peripherals independent clock configuration register
+    __vo uint32_t APB1SMENR2;       //APB1 peripheral clocks enable in Sleep and Stop modes register 2
+    __vo uint64_t APB2SMENR;        //APB2 peripheral clocks enable in Sleep and Stop modes register
+    __vo uint64_t CCIPR;            //Peripherals independent clock configuration register
     __vo uint32_t BDCR;             //Backup domain control register
     __vo uint32_t CSR;              //Control/status register
     __vo uint32_t CRRCR;            //Clock recovery RC register
@@ -220,5 +220,7 @@ typedef struct {
 #define RESET               DISABLE
 #define GPIO_PIN_SET        SET
 #define GPIO_PIN_RESET      RESET
+
+#include "stm32l432xx_gpio_driver.h"
 
 #endif /* INC_STM32L432XX_H_ */

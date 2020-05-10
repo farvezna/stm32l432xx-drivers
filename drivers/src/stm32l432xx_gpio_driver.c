@@ -6,7 +6,7 @@
  */
 
 
-#include "stm32l432xx_gpio_driver.h"
+#include "stm32l432xx.h"
 
 /*
  * Peripheral Clock setup
@@ -71,7 +71,7 @@ void GPIO_Init(GPIO_Handle_t *pGPIOHandle)
     if(pGPIOHandle->GPIO_PinConfig.GPIO_PinMode <= GPIO_MODE_ANALOG) {
         //non-interrrupt mode
         temp = (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode << (2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber)); //position bits
-        pGPIOHandle->pGPIOx->MODER &= ~(0x3 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); //clearing
+        pGPIOHandle->pGPIOx->MODER &= ~(0x3 << 2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); //clearing
         pGPIOHandle->pGPIOx->MODER |= temp; //set mode in actual register
     } else {
         //TODO: interrupt modes
@@ -80,12 +80,12 @@ void GPIO_Init(GPIO_Handle_t *pGPIOHandle)
 
     //configure speed
     temp = (pGPIOHandle->GPIO_PinConfig.GPIO_PinSpeed << (2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber)); //position bits
-    pGPIOHandle->pGPIOx->OSPEEDR &= ~(0x3 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); //clearing
+    pGPIOHandle->pGPIOx->OSPEEDR &= ~(0x3 << 2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); //clearing
     pGPIOHandle->pGPIOx->OSPEEDR |= temp;
     temp = 0;
     //configure pupd settings
     temp = (pGPIOHandle->GPIO_PinConfig.GPIO_PinPuPdControl << (2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber)); //position bits
-    pGPIOHandle->pGPIOx->PUPDR &= ~(0x3 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); //clearing
+    pGPIOHandle->pGPIOx->PUPDR &= ~(0x3 << 2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); //clearing
     pGPIOHandle->pGPIOx->PUPDR |= temp;
     temp = 0;
     //configure output type
