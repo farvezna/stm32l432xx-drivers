@@ -6,7 +6,7 @@
  */
 
 
-#include "stm32l432xx.h"
+#include "stm32l432xx_gpio_driver.h"
 
 /*
  * Peripheral Clock setup
@@ -74,7 +74,31 @@ void GPIO_Init(GPIO_Handle_t *pGPIOHandle)
         pGPIOHandle->pGPIOx->MODER &= ~(0x3 << 2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); //clearing
         pGPIOHandle->pGPIOx->MODER |= temp; //set mode in actual register
     } else {
-        //TODO: interrupt modes
+        //interrupt modes
+        if(pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_IT_FT) {
+            //configure FTSR (fall trigger selection register)
+            EXTI->FTSR |= (1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+            //clear corresponding RTSR bit to be safe
+            EXTI->RTSR &= ~(1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+        } else if(pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_IT_RT) {
+            //configure RTSR
+            EXTI->RTSR |= (1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+            //clear corresponding FTSR bit to be safe
+            EXTI->FTSR &= ~(1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+        } else if(pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_IT_RFT) {
+            //configure both FTSR and RTSR
+            EXTI->RTSR |= (1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+            EXTI->FTSR |= (1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+        }
+        //2, configure GPIO port selection in SYSCFG_EXTI
+        uint8_t temp1 = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber / 4;
+        uint8_t temp2 = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber % 4;
+        uint8_t portcode = GPIO_BASEADDR_TO_CODE(pGPIOHandle->pGPIOx);
+        SYSCFG_PCLK_EN();
+        SYSCFG->EXTICR[temp1] = portcode << (temp2 * 4);
+
+        //3. enable the EXTI interrupt delivery using IMR (interrupt mask register)
+        EXTI->IMR |= 1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
     }
     temp = 0; //reset temp
 
@@ -240,7 +264,7 @@ void GPIO_ToggleOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber)
 /****************************************************************************
  * @fn              - GPIO_IRQConfig
  *
- * @brief           - Function for configuring interrupts on gpio peripheral
+ * @brief           - Function for configuring interrupts on gpio peripheral, processor side(Cortex M4) config of NVIC
  *
  * @param[in]       - interrupt number
  * @param[in]       - interrupt priority

@@ -72,6 +72,9 @@
 
 /***********************************peripheral register definition structures************************************/
 
+/*
+ * peripheral register definition struct for GPIO
+ */
 typedef struct {
     __vo uint32_t MODER;             //GPIO port mode register           address offset 0x00 bytes
     __vo uint32_t OTYPER;            //GPIO output type register         address offset 0x04
@@ -85,6 +88,9 @@ typedef struct {
     __vo uint32_t BRR;               //GPIO port bit reset register?--what do
 } GPIO_RegDef_t;
 
+/*
+ * peripheral register definition struct for RCC
+ */
 typedef struct {
     __vo uint32_t CR;               //clock control register
     __vo uint32_t ICSCR;            //internal clock sources calibration register
@@ -120,6 +126,31 @@ typedef struct {
 } RCC_RegDef_t;
 
 /*
+ * peripheral register definition struct for EXTI
+ */
+typedef struct {
+    __vo uint32_t IMR;             //address offset 0x00 bytes
+    __vo uint32_t EMR;             //address offset 0x04
+    __vo uint32_t RTSR;
+    __vo uint32_t FTSR;
+    __vo uint32_t SWIER;
+    __vo uint32_t PR;
+} EXTI_RegDef_t;   //TODO: stm32L4 (vs F4) has IMR2, EMR2....etc. configure later pls
+
+/*
+ * peripheral register definition struct for SYSCFG
+ */
+typedef struct {
+    __vo uint32_t MEMRMP;           //memory remap register      address offset 0x00 bytes
+    __vo uint32_t CFGR1;            //configuration register 1    address offset 0x04
+    __vo uint32_t EXTICR[4];          //external interrupt configuration registers [1-4] ...note: only one of interest for EXTI use
+    __vo uint32_t SCSR;             //SRAM2 control and status register
+    __vo uint32_t CFGR2;            //configuration register 2
+    __vo uint32_t SWPR;             //SRAM2 write protection register
+    __vo uint32_t SKR;              //SRAM2 key register
+} SYSCFG_RegDef_t;
+
+/*
  * Peripheral definitions (base addresses typecasted to xxx_RegDef_t)
  */
 
@@ -129,6 +160,10 @@ typedef struct {
 #define GPIOH       ((GPIO_RegDef_t*)GPIOH_BASEADDR)
 
 #define RCC         ((RCC_RegDef_t*)RCC_BASEADDR)
+
+#define EXTI        ((EXTI_RegDef_t*)EXTI_BASEADDR)
+
+#define SYSCFG      ((SYSCFG_RegDef_t*)SYSCFG_BASEADDR)
 
 /*
  * Clock enable macros for GPIOx peripherals
@@ -212,6 +247,20 @@ typedef struct {
 #define GPIOB_REG_RESET()       do{ (RCC->AHB2RSTR |= (1 << 1)); (RCC->AHB2RSTR &= ~(1 << 1));} while(0)
 #define GPIOC_REG_RESET()       do{ (RCC->AHB2RSTR |= (1 << 2)); (RCC->AHB2RSTR &= ~(1 << 2));} while(0)
 #define GPIOH_REG_RESET()       do{ (RCC->AHB2RSTR |= (1 << 7)); (RCC->AHB2RSTR &= ~(1 << 7));} while(0)
+
+#define GPIO_BASEADDR_TO_CODE(x)   ((x == GPIOA) ? 0 :\
+                                    (x == GPIOB) ? 1 :\
+                                    (x == GPIOC) ? 2 :\
+                                    (x == GPIOH) ? 15:0 )
+
+//IRQ numbers STM32L43xxx (interrupt request) position
+#define IRQ_NO_EXTI0        6
+#define IRQ_NO_EXTI1        7
+#define IRQ_NO_EXTI2        8
+#define IRQ_NO_EXTI3        9
+#define IRQ_NO_EXTI4        10
+#define IRQ_NO_EXTI9_5      23
+#define IRQ_NO_EXTI15_10    40
 
 //generic macros
 #define ENABLE              1
