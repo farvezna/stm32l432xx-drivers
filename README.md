@@ -1,6 +1,6 @@
 # stm32l432xx-drivers
 
 [x] GPIO 
-[] SPI
-[] I2C
-[] UART
+[o] SPI
+[o] I2C
+[o] UART
