@@ -1,7 +1,7 @@
 # stm32l432xx-drivers
 
 ## Peripheral Drivers Implemented
-- [x] GPIO (need to implement interrupts)
+- [x] GPIO
 - [ ] SPI
 - [ ] I2C
 - [ ] UART
