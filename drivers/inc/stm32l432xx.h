@@ -12,6 +12,31 @@
 
 #define __vo volatile
 
+/********************START: Processor Specific Details**************************************
+ *
+ * ARM Cortex Mx Processor NVIC ISERx register addresses
+ */
+
+#define NVIC_ISER0                  ( (__vo uint32_t*) 0xE00E100 )
+#define NVIC_ISER1                  ( (__vo uint32_t*) 0xE00E104 )
+#define NVIC_ISER2                  ( (__vo uint32_t*) 0xE00E108 )
+#define NVIC_ISER3                  ( (__vo uint32_t*) 0xE00E10C )
+
+/*
+ * ARM Cortex Mx Processor NVIC ICERx register addresses
+ */
+#define NVIC_ICER0                  ( (__vo uint32_t*) 0xE00E180 )
+#define NVIC_ICER1                  ( (__vo uint32_t*) 0xE00E184 )
+#define NVIC_ICER2                  ( (__vo uint32_t*) 0xE00E188 )
+#define NVIC_ICER3                  ( (__vo uint32_t*) 0xE00E18C )
+
+/*
+ * ARM Cortex Mx Processor Priority Register Address Calculation
+ */
+#define NVIC_PR_BASE_ADDR           ( (__vo uint32_t*) 0xE00E400)
+
+
+#define NO_PR_BITS_IMPLEMENTED     4
 /*
  * base addresses of Flash and SRAM memories
  */
@@ -259,8 +284,6 @@ typedef struct {
 #define IRQ_NO_EXTI2        8
 #define IRQ_NO_EXTI3        9
 #define IRQ_NO_EXTI4        10
-#define IRQ_NO_EXTI9_5      23
-#define IRQ_NO_EXTI15_10    40
 
 //generic macros
 #define ENABLE              1

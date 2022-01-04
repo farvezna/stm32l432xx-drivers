@@ -142,7 +142,8 @@ void GPIO_ToggleOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber);
 /*
  * IRQ Configuration and ISR handling
  */
-void GPIO_IRQConfig(uint8_t IRQNumber, uint8_t IRQPriority, uint8_t EnorDI); //for interrupt config; could also consider IRQGrouping param
+void GPIO_IRQInterruptConfig(uint8_t IRQNumber, uint8_t EnorDI); //for interrupt config; could also consider IRQGrouping param
 void GPIO_IRQHandling(uint8_t PinNumber); //ISR--interrupt service routine aka interrupt handle for interrupt request (IRQ)
+void GPIO_IRQPriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority);
 
 #endif /* INC_STM32L432XX_GPIO_DRIVER_H_ */

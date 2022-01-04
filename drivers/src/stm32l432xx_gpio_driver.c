@@ -262,12 +262,11 @@ void GPIO_ToggleOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber)
  * IRQ Configuration and ISR handling
  */
 /****************************************************************************
- * @fn              - GPIO_IRQConfig
+ * @fn              - GPIO_IRQInterruptConfig
  *
  * @brief           - Function for configuring interrupts on gpio peripheral, processor side(Cortex M4) config of NVIC
  *
  * @param[in]       - interrupt number
- * @param[in]       - interrupt priority
  * @param[in]       - ENABLE or DISABLE macros
  *
  * @return          - none
@@ -275,9 +274,67 @@ void GPIO_ToggleOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber)
  * @Note            - none
  *
  */
-void GPIO_IRQConfig(uint8_t IRQNumber, uint8_t IRQPriority, uint8_t EnorDI)
+void GPIO_IRQInterruptConfig(uint8_t IRQNumber,  uint8_t EnorDI)
 {
+    if (EnorDI == ENABLE)
+    {
+        if(IRQNumber <= 31)
+        {
+            //Program ISER0 register
+            *NVIC_ISER0 |= (1 << IRQNumber);
 
+        } else if(IRQNumber > 31 && IRQNumber < 64) // 32 to 63
+        {
+            //Program ISER1 register
+            *NVIC_ISER1 |= (1 << IRQNumber % 32);
+        } else if(IRQNumber >= 64 && IRQNumber < 96)
+        {
+            //program ISER2 register
+            *NVIC_ISER2 |= (1 << IRQNumber % 64);
+        }
+    } else
+    {
+        if(IRQNumber <= 31)
+        {
+            //Program ISER0 register
+            *NVIC_ICER0 |= (1 << IRQNumber);
+        } else if(IRQNumber > 31 && IRQNumber < 64) // 32 to 63
+        {
+            //Program ISER1 register
+            *NVIC_ICER1 |= (1 << IRQNumber % 32);
+        } else if(IRQNumber >= 64 && IRQNumber < 96)
+        {
+            //program ISER2 register
+            *NVIC_ICER2 |= (1 << IRQNumber % 64);
+        }
+    }
+}
+
+/*
+ * IRQ Priority Configuration and ISR handling
+ */
+/****************************************************************************
+ * @fn              - GPIO_IRQPriorityConfig
+ *
+ * @brief           - Function for configuring interrupt priority on gpio peripheral, processor side(Cortex M4) config of NVIC
+ *
+ * @param[in]       - interrupt number
+ * @param[in]       - interrupt priority
+ *
+ * @return          - none
+ *
+ * @Note            - none
+ *
+ */
+void GPIO_IRQPriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority)
+{
+   //1. Find out the IPR register
+    uint8_t iprx = IRQNumber  / 4;
+    uint8_t iprx_section = IRQNumber % 4;
+
+
+    uint8_t shift_amount = (8 * iprx_section) + (8 - NO_PR_BITS_IMPLEMENTED);
+    *(NVIC_PR_BASE_ADDR + iprx*4) |= ( IRQPriority << shift_amount);
 }
 
 /****************************************************************************
@@ -295,5 +352,10 @@ void GPIO_IRQConfig(uint8_t IRQNumber, uint8_t IRQPriority, uint8_t EnorDI)
  */
 void GPIO_IRQHandling(uint8_t PinNumber)
 {
-
+    //clear the exti pr register corresponding to the pin number
+    if (EXTI->PR & (1 << PinNumber)) //if set, it is pending and to be cleared
+    {
+        //clear
+        EXTI->PR |= (1 << PinNumber); //write 1 to clear per ref manual
+    }
 }
